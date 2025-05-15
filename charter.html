@@ -15,7 +15,7 @@
         const BGM = new Audio(chartsSrc+"HeiligesRequiem/HeiligesRequiem.wav");
 
         const keys = {
-            1:0,
+            0:0,
             2:1,
             "ShiftLeft":2,
             "Space":3
@@ -31,7 +31,7 @@
             if (!started) return;
 
             if (!key[e.code]) key[e.code] = true;
-            if (key[e.code] && keys[e.code] != undefined) string += `{type:${keys[e.code]}, time:${BGM.currentTime}},\n`;
+            if (key[e.code] && keys[e.code] != undefined) string += `{"type":${keys[e.code]}, "time":${BGM.currentTime}},\n`;
 
             if (e.code == "Enter") console.log(string+"]");
         });
@@ -46,7 +46,7 @@
         {
             if (!started) return;
 
-            if (keys[e.code != undefined])  string += `{type:${keys[e.button]}, time:${BGM.currentTime}},\n`;
+            if (keys[e.button] != undefined) string += `{"type":${keys[e.button]}, "time":${BGM.currentTime}},\n`;
         });
 
         window.addEventListener("click", () =>
