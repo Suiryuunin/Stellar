@@ -6,15 +6,14 @@ export class Chart
     {
         this.title = title;
 
-        this.lead;
-        this.bass;
+        this.chart;
         this.track = new Audio();
     }
 
     async FetchChart(path)
     {
-        await Fetch((result) => this.lead = result, "../Assets/Charts/"+path+"/lead.json");
-        await Fetch((result) => this.bass = result, "../Assets/Charts/"+path+"/bass.json");
+        await Fetch((result) => this.chart = result, "../Assets/Charts/"+path+"/chart.json");
+        this.chart[0].y = 1;
         this.track.src = "../Assets/Charts/"+path+"/track.wav";
         this.track.currentTime = 0;
     }

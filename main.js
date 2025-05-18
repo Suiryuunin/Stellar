@@ -18,7 +18,7 @@ function render()
 {
     rr.fillBackground("white");
     reader.render();
-    rr.fillRect(new TRect(( (4*0.2) ) / 4 * rr.canvas.width, 0, 4, rr.canvas.height));
+    rr.fillRect(new TRect(( (4*0.2) ) / 4 * rr.ctx[0].canvas.width, 0, 4, 1080));
     rr.render();
 }
 

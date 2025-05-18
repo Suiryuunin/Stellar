@@ -21,16 +21,8 @@ export class Reader
         this.accuracyUI = [];
 
         this.chart = chart;
-        this.lastI =
-        {
-            lead:0,
-            bass:0
-        }
-        this.closestI =
-        {
-            lead:0,
-            bass:0
-        }
+        this.lastI = 0;
+        this.closestI = 0;
     }
 
     start()
@@ -43,32 +35,37 @@ export class Reader
 
     }
 
+    getNote(index)
+    {
+        return this.chart.chart[index];
+    }
+
     timeToX(time)
     {
-        return ( (this.speed*this.hitpos)+(time-this.chart.track.currentTime) ) / this.speed * this.rr.canvas.width;
+        return ( (this.speed*this.hitpos)+(time-this.chart.track.currentTime) ) / this.speed * this.rr.ctx[0].canvas.width;
     }
 
-    updateLastIndex(type = "lead")
+    updateLastIndex()
     {
-        let i = this.lastI[type];
-        while (this.chart[type][i] != undefined && this.chart[type][i].time < this.chart.track.currentTime-(this.speed*this.hitpos))
+        let i = this.lastI;
+        while (this.getNote(i) != undefined && this.getNote(i).time < this.chart.track.currentTime-(this.speed*this.hitpos))
             i++;
-        this.lastI[type] = i;
+        this.lastI = i;
     }
-    updateClosestIndex(type = "lead")
+    updateClosestIndex()
     {
-        let i = this.closestI[type];
-        if (this.chart[type][i] != undefined) this.chart[type][i].closest = false;
-        while (this.chart[type][i] != undefined && (this.chart[type][i].time < this.chart.track.currentTime-this.goodDelay || !this.chart[type][i].active))
+        let i = this.closestI;
+        if (this.getNote(i) != undefined) this.getNote(i).closest = false;
+        while (this.getNote(i) != undefined && (this.getNote(i).time < this.chart.track.currentTime-this.goodDelay || !this.getNote(i).active))
             i++;
-        if (this.chart[type][i] != undefined) this.chart[type][i].closest = true;
-        this.closestI[type] = i;
+        if (this.getNote(i) != undefined) this.getNote(i).closest = true;
+        this.closestI = i;
     }
 
-    checkAccuracy(type = 0, category = "lead")
+    checkAccuracy(type = 0)
     {
-        if (this.chart[category][this.closestI[category]].type != type) return -1;
-        const delay = Math.abs(this.chart.track.currentTime-this.chart[category][this.closestI[category]].time)
+        if (this.chart.chart[this.closestI].type != type) return -1;
+        const delay = Math.abs(this.chart.track.currentTime-this.chart.chart[this.closestI].time)
         if (delay > this.badDelay) return -1;
         if (delay > this.goodDelay) return 2;
         if (delay > this.perfectDelay) return 1;
@@ -79,38 +76,38 @@ export class Reader
     {
         if (this.input.checkInput("slash"))
         {
-            const accuracy = this.checkAccuracy(0, "lead");
+            const accuracy = this.checkAccuracy(0);
             if (accuracy >= 0)
             {
-                this.chart["lead"][this.closestI["lead"]].active = false;
-                this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart["lead"][this.closestI["lead"]].time)));
+                this.chart.chart[this.closestI].active = false;
+                this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart.chart[this.closestI].time)));
             }
         }
         if (this.input.checkInput("parry"))
         {
-            const accuracy = this.checkAccuracy(1, "lead");
+            const accuracy = this.checkAccuracy(1);
             if (accuracy >= 0)
             {
-                this.chart["lead"][this.closestI["lead"]].active = false;
-                this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart["lead"][this.closestI["lead"]].time)));
+                this.chart.chart[this.closestI].active = false;
+                this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart.chart[this.closestI].time)));
             }
         }
         if (this.input.checkInput("up"))
         {
-            const accuracy = this.checkAccuracy(2, "bass");
+            const accuracy = this.checkAccuracy(2);
             if (accuracy >= 0)
             {
-                this.chart["bass"][this.closestI["bass"]].active = false;
-                this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart["bass"][this.closestI["bass"]].time)));
+                this.chart.chart[this.closestI].active = false;
+                this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart.chart[this.closestI].time)));
             }
         }
         if (this.input.checkInput("down"))
         {
-            const accuracy = this.checkAccuracy(3, "bass");
+            const accuracy = this.checkAccuracy(3);
             if (accuracy >= 0)
             {
-                this.chart["bass"][this.closestI["bass"]].active = false;
-                this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart["bass"][this.closestI["bass"]].time)));
+                this.chart.chart[this.closestI].active = false;
+                this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart.chart[this.closestI].time)));
             }
         }
     }
@@ -118,17 +115,15 @@ export class Reader
     update()
     {
         // update the index
-        this.updateLastIndex("lead");
-        this.updateLastIndex("bass");
+        this.updateLastIndex();
         
-        if (this.chart.lead[this.lastI.lead] == undefined && this.chart.bass[this.lastI.bass] == undefined)
+        if (this.chart.chart[this.lastI] == undefined)
         {
             this.end();
             return;
         }
 
-        this.updateClosestIndex("lead");
-        this.updateClosestIndex("bass");
+        this.updateClosestIndex();
 
         this.resolveInput();
 
@@ -137,25 +132,25 @@ export class Reader
 
     renderType(x, note)
     {
-        const stroke = note.closest ? "hotpink" : "black";
-        const T = new TRect(x, this.y*this.rr.canvas.height, 32,32);
+        const stroke = note.closest ? "gray" : "black";
+        const T = new TRect(x, note.y*(this.rr.ctx[0].canvas.height-32), 32,32);
         switch(note.type)
         {
             case 0:
                 this.rr.fillRect(T, "red");
-                this.rr.strokeRect(T, stroke,0,true,4);
+                this.rr.strokeRect(T, stroke,0,false,4);
                 break;
             case 1:
                 this.rr.fillRect(T, "gold");
-                this.rr.strokeRect(T, stroke,0,true,4);
+                this.rr.strokeRect(T, stroke,0,false,4);
                 break;
             case 2:
                 this.rr.fillRect(T, "emerald");
-                this.rr.strokeRect(T, stroke,0,true,4);
+                this.rr.strokeRect(T, stroke,0,false,4);
                 break;
             case 3:
                 this.rr.fillRect(T, "blue");
-                this.rr.strokeRect(T, stroke,0,true,4);
+                this.rr.strokeRect(T, stroke,0,false,4);
                 break;
             default:
                 console.log("WHAT");
@@ -168,20 +163,44 @@ export class Reader
         this.renderType(this.timeToX(note.time), note);
     }
 
-    iterateActiveNotes(type, callback)
+    setY(index)
     {
-        for (let i = this.lastI[type]; this.chart[type][i] != undefined && this.chart[type][i].time < this.chart.track.currentTime + (this.speed*(1-this.hitpos)); i++)
+        switch(this.getNote(index).type)
         {
-            if (this.chart[type][i].active)
+            case 2:
             {
-                callback(this.chart[type][i]);
+                this.getNote(index).y = this.getNote(index-1).y;
+                this.getNote(index+1).y = 0;
+                break;
+            }
+            case 3:
+            {
+                this.getNote(index).y = this.getNote(index-1).y;
+                this.getNote(index+1).y = 1;
+                break;
+            }
+            default:
+            {
+                this.getNote(index).y = this.getNote(index-1).y;
+                break;
+            }
+        }
+    }
+
+    iterateActiveNotes(callback)
+    {
+        for (let i = this.lastI; this.getNote(i) != undefined && this.getNote(i).time < this.chart.track.currentTime + (this.speed*(1-this.hitpos)); i++)
+        {
+            if (this.getNote(i).y == undefined) this.setY(i);
+            if (this.getNote(i).active)
+            {
+                callback(this.getNote(i));
             }
         }
     }
 
     render()
     {
-        this.iterateActiveNotes("lead", (e) => this.renderNoteAt(e));
-        this.iterateActiveNotes("bass", (e) => this.renderNoteAt(e));
+        this.iterateActiveNotes((e) => this.renderNoteAt(e));
     }
 }
