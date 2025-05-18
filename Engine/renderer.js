@@ -1,18 +1,18 @@
-class Renderer
+export class Renderer
 {
     "use strict";
 
-    constructor(canvas, layers)
+    constructor(canvas, layers=1)
     {
         this.canvas = canvas;
         this.ctx = [document.createElement("canvas").getContext("2d")];
-        this.ctx[0].canvas.width = C_RES.x;
-        this.ctx[0].canvas.height = C_RES.y;
+        this.ctx[0].canvas.width = 1920;
+        this.ctx[0].canvas.height = 1080;
         for (let i = 0; i < layers-1; i++)
         {
             this.ctx[i].push(document.createElement("canvas").getContext("2d"));
-            this.ctx[i].canvas.width = C_RES.x;
-            this.ctx[i].canvas.height = C_RES.y;
+            this.ctx[i].canvas.width = 1920;
+            this.ctx[i].canvas.height = 1080;
         }
         this.layers = layers;
         this.display = canvas.getContext("2d");
@@ -142,19 +142,19 @@ class Renderer
      // RECT //
     //////////
 
-    fillRect(s_T, color = this.color, l = 0, alpha = 1)
+    fillRect(T, color = this.color, l = 0, alpha = 1)
     {
         if (alpha == 0) return;
 
         this.ctx[l].globalAlpha = alpha;
         this.ctx[l].fillStyle = color;
         
-        // s_T for Standard Transform
-        this.ctx[l].fillRect(s_T.x, s_T.y, s_T.w, s_T.h);
+        // T for Transform
+        this.ctx[l].fillRect(T.x, T.y, T.w, T.h);
         
         this.ctx[l].globalAlpha = 1;
     }
-    strokeRect(s_T, color = this.color, l = 0, inside = true, thickness = 1, alpha = 1)
+    strokeRect(T, color = this.color, l = 0, inside = true, thickness = 1, alpha = 1)
     {
         if (alpha == 0) return;
 
@@ -164,8 +164,8 @@ class Renderer
         this.ctx[l].strokeStyle = color;
 
         this.ctx[l].beginPath();
-        this.ctx[l].rect(s_T.x +(inside?thickness:0), s_T.y +(inside?thickness:0),
-                    s_T.w -(inside?thickness*2:0), s_T.h -(inside?thickness*2:0));
+        this.ctx[l].rect(T.x +(inside?thickness:0), T.y +(inside?thickness:0),
+                    T.w -(inside?thickness*2:0), T.h -(inside?thickness*2:0));
 
         this.ctx[l].stroke();
         
@@ -234,23 +234,5 @@ class Renderer
                 this.display.canvas.width, this.display.canvas.height
             );
         }
-            
-        // DARKCTX.globalCompositeOperation = 'source-over';
-        // DARKCTX.fillStyle = `rgba(0,0,0,1)`;
-        // DARKCTX.fillRect(0, 0, res.w, res.h);
-        
-        // addLight(player1.center.x-VP.x,player1.center.y-VP.y, 128,player1.center.x-VP.x,player1.center.y-VP.y, 512);
-
-        // DARKCTX.globalCompositeOperation = 'source-over';
-
-        // this.display.globalCompositeOperation = "multiply";
-        // this.display.drawImage(DARKCTX.canvas,
-        //     0, 0,
-        //     DARKCTX.canvas.width, DARKCTX.canvas.height,
-        //     0, 0,
-        //     this.display.canvas.width, this.display.canvas.height
-        // );
-
-        // this.display.globalCompositeOperation = "source-over";
     }
 }
