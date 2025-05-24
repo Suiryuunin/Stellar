@@ -92,50 +92,15 @@ export class Renderer
         this.ctx[l].globalAlpha = 1;
     }
 
-    // drawImg({x, y, w, h, o}, {l,r,t,b}, img, alpha = 1, ro = 0, sx=1,sy=1)
-    // {
-    //     if (alpha == 0) return;
+    drawImg(T, img, l = 0, alpha = 1)
+    {
+        if (alpha == 0) return;
 
-    //     this.ctx.globalAlpha = alpha;
-    //     if (o != undefined && ro == 0 && sx == 1 && sy == 1)
-    //     {
-    //         x += w * o.x;
-    //         y += h * o.y;
-            
-    //         this.ctx.drawImage(img, x-l, y-t, w+l+r, h+t+b);
-    //         return;
-    //     }
+        this.ctx[l].globalAlpha = alpha;
         
-    //     this.ctx.save();
-
-    //     if ((sx != 1 || sy != 1) && ro != 0)
-    //     {
-    //         this.ctx.translate(x, y);
-    //         this.ctx.rotate(ro * Math.PI / 180);
-    //         this.ctx.scale(sx,sy);
-            
-    //     }
-    //     else
-    //     {
-    //         if (sx != 1 || sy != 1)
-    //         {
-    //             this.ctx.translate(x, y);
-    //             this.ctx.scale(sx,sy);
-    //         }
-
-    //         if (ro != 0)
-    //         {
-    //             this.ctx.translate(x, y);
-    //             this.ctx.rotate(ro * Math.PI / 180);
-    //         }
-    //     }
-
-    //     this.ctx.drawImage(img, w * o.x, h * o.y, w, h);
-
-    //     // restore the context to its untranslated/unrotated state
-    //     this.ctx.restore();
-    //     this.ctx.globalAlpha = 1;
-    // }
+        this.ctx[l].drawImage(img, T.x, T.y, T.w, T.h);
+        return;
+    }
 
 
       //////////

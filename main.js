@@ -1,5 +1,8 @@
+import { Frame } from "./Components/animator.js";
 import { Chart } from "./Components/chart.js";
+import { Player } from "./Components/player.js";
 import { Reader } from "./Components/reader.js";
+import { Sprite } from "./Components/sprite.js";
 import { TRect } from "./Components/transform.js";
 import { Engine } from "./Engine/engine.js";
 import { Renderer } from "./Engine/renderer.js";
@@ -7,18 +10,24 @@ import { Renderer } from "./Engine/renderer.js";
 const rr = new Renderer(document.querySelector("canvas"), 1);
 const chart = new Chart("Heiliges Requiem");
 await chart.FetchChart("HeiligesRequiem");
-const reader = new Reader(rr, chart, 2)
+const reader = new Reader(rr, chart, 2);
+
+const player = new Player();
 
 function update(dt)
 {
     reader.update(dt);
+    player.update(reader.time, reader.input);
+    
+    reader.input.clear();
 }
 
 function render()
 {
-    rr.fillBackground("white");
+    rr.fillBackground("black");
     reader.render();
-    rr.fillRect(new TRect(( (4*0.2) ) / 4 * rr.ctx[0].canvas.width, 0, 4, 1080));
+    rr.fillRect(new TRect(( (4*0.2) ) / 4 * rr.ctx[0].canvas.width, 0, 4, 1080), "white");
+    player.render(rr)
     rr.render();
 }
 

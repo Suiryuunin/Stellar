@@ -7,8 +7,9 @@ export class Input
 
         this.keydown = window.addEventListener("keydown", (e) =>
         {
-            this.held[e.code] = true;
             if (!this.held[e.code]) this.inputs[e.code] = true;
+            this.held[e.code] = true;
+            console.log(this.inputs)
         });
         this.keyup = window.addEventListener("keyup", (e) =>
         {
@@ -36,12 +37,20 @@ export class Input
     }
 }
 
-export const inputTypes = ["up", "down", "slash", "parry"];
+export const inputTypes = ["slash", "parry", "up", "down"];
+
+export const typeIndex =
+{
+    "slash" :0,
+    "parry" :1,
+    "up"    :2,
+    "down"  :3
+};
 
 export let keyBinds =
 {
-    "up": ["ShiftLeft", "KeyW"],
-    "down": ["Space", "KeyS"],
-    "slash": [0],
-    "parry": [2]
+    "up": ["Space", "KeyW"],
+    "down": ["ShiftLeft", "KeyS"],
+    "slash": [0, "KeyJ"],
+    "parry": [2, "KeyK"]
 }

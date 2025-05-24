@@ -1,4 +1,4 @@
-import { Input } from "../Engine/input.js";
+import { Input, inputTypes, typeIndex } from "../Engine/input.js";
 import { AccuracyFX } from "./FX.js";
 import { TRect } from "./transform.js";
 
@@ -6,6 +6,9 @@ export class Reader
 {
     constructor(rr, chart, speed = 4)
     {
+        this.time = 0;
+        this.clearedNoteType = "";
+
         this.rr = rr;
         this.y = 1;
 
@@ -74,47 +77,29 @@ export class Reader
 
     resolveInput()
     {
-        if (this.input.checkInput("slash"))
+        for (const type of inputTypes)
         {
-            const accuracy = this.checkAccuracy(0);
-            if (accuracy >= 0)
+            if (this.input.checkInput(type))
             {
-                this.chart.chart[this.closestI].active = false;
-                this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart.chart[this.closestI].time)));
+                console.log(type)
+                const accuracy = this.checkAccuracy(typeIndex[type]);
+                if (accuracy >= 0)
+                {
+                    this.chart.chart[this.closestI].active = false;
+                    this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart.chart[this.closestI].time)));
+                    this.clearedNoteType = type;
+                }
             }
         }
-        if (this.input.checkInput("parry"))
-        {
-            const accuracy = this.checkAccuracy(1);
-            if (accuracy >= 0)
-            {
-                this.chart.chart[this.closestI].active = false;
-                this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart.chart[this.closestI].time)));
-            }
-        }
-        if (this.input.checkInput("up"))
-        {
-            const accuracy = this.checkAccuracy(2);
-            if (accuracy >= 0)
-            {
-                this.chart.chart[this.closestI].active = false;
-                this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart.chart[this.closestI].time)));
-            }
-        }
-        if (this.input.checkInput("down"))
-        {
-            const accuracy = this.checkAccuracy(3);
-            if (accuracy >= 0)
-            {
-                this.chart.chart[this.closestI].active = false;
-                this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart.chart[this.closestI].time)));
-            }
-        }
+        this.clearedNoteType = "";
     }
 
     update()
     {
         // update the index
+        this.time = this.chart.track.currentTime;
+        this.clearedNoteType = "";
+
         this.updateLastIndex();
         
         if (this.chart.chart[this.lastI] == undefined)
@@ -126,8 +111,6 @@ export class Reader
         this.updateClosestIndex();
 
         this.resolveInput();
-
-        this.input.clear();
     }
 
     renderType(x, note)
@@ -145,7 +128,7 @@ export class Reader
                 this.rr.strokeRect(T, stroke,0,false,4);
                 break;
             case 2:
-                this.rr.fillRect(T, "emerald");
+                this.rr.fillRect(T, "green");
                 this.rr.strokeRect(T, stroke,0,false,4);
                 break;
             case 3:
