@@ -188,7 +188,8 @@ export class Renderer
 
     render()
     {
-        this.display.imageSmoothingEnabled = true;
+        this.ctx[0].imageSmoothingEnabled = false;
+        this.display.imageSmoothingEnabled = false;
 
         for (let i = 0; i < this.layers; i++)
         {

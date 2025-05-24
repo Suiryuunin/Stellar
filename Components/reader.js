@@ -91,7 +91,6 @@ export class Reader
                 }
             }
         }
-        this.clearedNoteType = "";
     }
 
     update()

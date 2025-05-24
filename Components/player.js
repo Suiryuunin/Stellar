@@ -1,14 +1,34 @@
 import { inputTypes } from "../Engine/input.js";
 import { Frame } from "./animator.js";
 import { Sprite } from "./sprite.js";
-import { TRect } from "./transform.js";
+import { Pos, TRect } from "./transform.js";
 
 export class Player
 {
-    constructor()
+    constructor(P=new Pos(0,0))
     {
+        this.T = new TRect(P.x,P.y,256,256);
+        this.invert = "";
+        const w = 256;
+        const h = 256;
+
         this.sprites = {
-            "up": new Sprite(new TRect(0,0,39*4,64*4), "Slash", 39,64, 8,
+            "character": new Sprite(new TRect(P.x,P.y,w,h), "Character", 42,42, 4,
+            [
+                new Frame(0,0.2),
+                new Frame(1,0.2),
+                new Frame(2,0.2),
+                new Frame(3,0.2)
+            ], true, true),
+            "Icharacter": new Sprite(new TRect(P.x,P.y,w,h), "Character/i", 42,42, 4,
+            [
+                new Frame(0,0.2),
+                new Frame(1,0.2),
+                new Frame(2,0.2),
+                new Frame(3,0.2)
+            ], true, true),
+
+            "slash": new Sprite(new TRect(P.x,P.y,w,h), "Slash", 39,64, 8,
             [
                 new Frame(0, 0.010),
                 new Frame(1, 0.015),
@@ -18,9 +38,21 @@ export class Player
                 new Frame(5, 0.025),
                 new Frame(6, 0.030),
                 new Frame(7, 1.000)
-            ], false),
+            ], false, false),
+
+            "Islash": new Sprite(new TRect(P.x,P.y,w,h), "Slash/i", 39,64, 8,
+            [
+                new Frame(0, 0.010),
+                new Frame(1, 0.015),
+                new Frame(2, 0.015),
+                new Frame(3, 0.025),
+                new Frame(4, 0.020),
+                new Frame(5, 0.025),
+                new Frame(6, 0.030),
+                new Frame(7, 1.000)
+            ], false, false),
             
-            "down": new Sprite(new TRect(0,0,39*4,64*4), "Slash", 39,64, 8,
+            "parry": new Sprite(new TRect(P.x,P.y,w,h), "Slash", 39,64, 8,
             [
                 new Frame(0, 0.010),
                 new Frame(1, 0.015),
@@ -30,58 +62,53 @@ export class Player
                 new Frame(5, 0.025),
                 new Frame(6, 0.030),
                 new Frame(7, 1.000)
-            ], false),
+            ], false, false),
+
+            "up": undefined,
             
-            "slash": new Sprite(new TRect(0,0,39*4,64*4), "Slash", 39,64, 8,
-            [
-                new Frame(0, 0.010),
-                new Frame(1, 0.015),
-                new Frame(2, 0.015),
-                new Frame(3, 0.025),
-                new Frame(4, 0.020),
-                new Frame(5, 0.025),
-                new Frame(6, 0.030),
-                new Frame(7, 1.000)
-            ], false),
-            
-            "parry": new Sprite(new TRect(0,0,39*4,64*4), "Slash", 39,64, 8,
-            [
-                new Frame(0, 0.010),
-                new Frame(1, 0.015),
-                new Frame(2, 0.015),
-                new Frame(3, 0.025),
-                new Frame(4, 0.020),
-                new Frame(5, 0.025),
-                new Frame(6, 0.030),
-                new Frame(7, 1.000)
-            ], false)
+            "down": undefined
         };
     }
 
-    checkInput(input, time)
+    checkInput(input, clearedNoteType, time)
     {
         for (const type of inputTypes)
         {
-            if (input.checkInput(type))
-                this.sprites[type].play(time);
+            if (clearedNoteType == type && input.checkInput(type))
+            {
+                if (type == "up")
+                {
+                    this.T.y = 64;
+                    this.invert = "I";
+                }
+                else if (type == "down")
+                {
+                    this.T.y = 1080-this.T.h-64;
+                    this.invert = "";
+                }
+                if (this.sprites[this.invert+type] != undefined) this.sprites[this.invert+type].play(time);
+            }
         }
     }
 
-    update(time, input)
+    update(time, input, clearedNoteType)
     {
-        this.checkInput(input, time);
+        if (clearedNoteType != "") this.checkInput(input, clearedNoteType, time);
 
         for (const type of inputTypes)
         {
-            this.sprites[type].update(time);
+            if (this.sprites[this.invert+type] != undefined) this.sprites[this.invert+type].update(time, this.T);
         }
+        this.sprites[this.invert+"character"].update(time, this.T);
     }
 
     render(rr)
     {
         for (const type of inputTypes)
         {
-            this.sprites[type].render(rr);
+            if (this.sprites[this.invert+type] != undefined) this.sprites[this.invert+type].render(rr);
         }
+
+        this.sprites[this.invert+"character"].render(rr);
     }
 }
