@@ -64,7 +64,7 @@ export class Ani
     {
         this.setAnimationLoop(loop);
         this.startTime = startTime;
-        this.currentImg = this.getCurrentImg(this.startTime % this.loopTime);
+        this.currentImg = this.getCurrentImg(Math.min(0,this.startTime % this.loopTime));
     }
 
     pause()

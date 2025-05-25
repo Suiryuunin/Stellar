@@ -1,16 +1,29 @@
-import { Ani, GenerateSet } from "./animator.js";
+import { Ani, Frame, GenerateSet } from "./animator.js";
+import { Pos } from "./transform.js";
 
 
 export class Sprite
 {
-    constructor(T, folderName, w, h, folderSize, loop, looping = true, active = true, startTime = 0)
+    constructor(T, folderName, w, h, folderSize, loop, looping = true, active = true, alpha = 1, startTime = 0)
     {
         this.T = T;
         this.active = active;
+        this.alpha = alpha;
         this.looping = looping;
 
+        let loop2 = loop;
+
+        if (loop*0 == 0)
+        {
+            loop2 = [];
+            for (let i = 0; i < folderSize; i++)
+            {
+                loop2.push(new Frame(i, loop));
+            }
+        }
+
         this.animation = new Ani(GenerateSet(folderName, w, h, folderSize));
-        this.animation.init(loop, startTime);
+        this.animation.init(loop2, startTime);
     }
 
     play(time)
@@ -26,15 +39,15 @@ export class Sprite
         this.T.y = P.y;
     }
 
-    update(time, P)
+    update(time, P = new Pos(0,0))
     {
         this.updatePos(P);
         this.animation.update(time);
-        if (!this.looping && this.animation.loop.length-1 == this.animation.currentIndex) this.active = false;
     }
 
     render(rr)
     {
-        if (this.active) rr.drawImg(this.T, this.animation.currentImg);
+        if (this.active) rr.drawImg(this.T, this.animation.currentImg, 0, this.alpha);
+        if (!this.looping && this.animation.loop.length-1 == this.animation.currentIndex) this.active = false;
     }
 }

@@ -1,3 +1,5 @@
+import { Pos } from "../Components/transform.js";
+
 export class Renderer
 {
     "use strict";
@@ -64,7 +66,7 @@ export class Renderer
         return this.ctx.measureText(word)["width"];
     }
 
-    write(word, color = this.color, pos, size = 16, o = new Vec2(0,0), l = 0, border = false, alpha = 1, linesMargin = 48)
+    write(word, color = this.color, pos, size = 16, o = new Pos(0,0), l = 0, border = false, alpha = 1, linesMargin = 48)
     {
         this.ctx[l].globalAlpha = alpha;
         this.ctx[l].lineWidth = 1;

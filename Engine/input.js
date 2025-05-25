@@ -5,11 +5,16 @@ export class Input
         this.inputs = {};
         this.held = {};
 
+        this.active = false;
+
         this.keydown = window.addEventListener("keydown", (e) =>
         {
-            if (!this.held[e.code]) this.inputs[e.code] = true;
+            if (!this.held[e.code])
+            {
+                this.active = true;
+                this.inputs[e.code] = true;
+            }
             this.held[e.code] = true;
-            console.log(this.inputs)
         });
         this.keyup = window.addEventListener("keyup", (e) =>
         {
@@ -18,6 +23,7 @@ export class Input
 
         this.mousedown = window.addEventListener("mousedown", (e) =>
         {
+            this.active = true;
             this.inputs[e.button] = true;
         });
     }
@@ -34,6 +40,7 @@ export class Input
     clear()
     {
         this.inputs = {};
+        this.active = false;
     }
 }
 

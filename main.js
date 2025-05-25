@@ -14,8 +14,8 @@ const player = new Player(new Pos(176,rr.ctx[0].canvas.height-256-64));
 
 function update(dt)
 {
-    reader.update(dt);
-    player.update(reader.time, reader.input, reader.clearedNoteType);
+    reader.update(player.y);
+    player.update(reader.time, reader.input, reader.clearedNoteType, reader.toY);
     
     reader.input.clear();
 }

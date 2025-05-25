@@ -7,6 +7,7 @@ export class Chart
         this.title = title;
 
         this.chart;
+        this.totalNotes = 0;
         this.track = new Audio();
     }
 
@@ -16,6 +17,7 @@ export class Chart
         this.chart[0].y = 1;
         this.track.src = "../Assets/Charts/"+path+"/track.wav";
         this.track.currentTime = 0;
+        this.totalNotes = this.chart.length;
     }
 
     start()
