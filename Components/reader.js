@@ -1,11 +1,50 @@
 import { Input, inputTypes, typeIndex } from "../Engine/input.js";
+import { Ani, Frame, GenerateSet } from "./animator.js";
 import { AccuracyFX } from "./FX.js";
+import { Sprite } from "./sprite.js";
 import { Pos, TRect } from "./transform.js";
 
 export class Reader
 {
     constructor(rr, chart, speed = 4)
     {
+        this.enemyI = 0;
+
+        this.sprites =
+        [{
+        "N":
+        {
+            "enemy": new Ani(GenerateSet("Enemy", 64,64,4)),
+            "projectile": new Ani(GenerateSet("Projectile", 64,64,3))
+        },
+        "I":
+        {
+            "enemy": new Ani(GenerateSet("Enemy/i", 64,64,4)),
+            "projectile": new Ani(GenerateSet("Projectile/i", 64,64,3))
+        }
+        },
+        {
+        "N":
+        {
+            "enemy": new Ani(GenerateSet("Enemy", 64,64,4)),
+            "projectile": new Ani(GenerateSet("Projectile", 64,64,3))
+        },
+        "I":
+        {
+            "enemy": new Ani(GenerateSet("Enemy/i", 64,64,4)),
+            "projectile": new Ani(GenerateSet("Projectile/i", 64,64,3))
+        }
+        }];
+        const d = 0.8;
+        this.sprites[0].N.enemy.init([new Frame(0,d),new Frame(1,d),new Frame(2,d),new Frame(3,d)], 0);
+        this.sprites[0].I.enemy.init([new Frame(0,d),new Frame(1,d),new Frame(2,d),new Frame(3,d)], 0);
+        this.sprites[1].N.enemy.init([new Frame(1,d),new Frame(2,d),new Frame(3,d),new Frame(0,d)], 0);
+        this.sprites[1].I.enemy.init([new Frame(1,d),new Frame(2,d),new Frame(3,d),new Frame(0,d)], 0);
+        this.sprites[0].N.projectile.init([new Frame(0,d),new Frame(1,d),new Frame(2,d)], 0);
+        this.sprites[0].I.projectile.init([new Frame(0,d),new Frame(1,d),new Frame(2,d)], 0);
+        this.sprites[1].N.projectile.init([new Frame(1,d),new Frame(2,d),new Frame(0,d)], 0);
+        this.sprites[1].I.projectile.init([new Frame(1,d),new Frame(2,d),new Frame(0,d)], 0);
+
         this.score = 0;
         this.pts =
         {
@@ -19,6 +58,8 @@ export class Reader
         this.rr = rr;
         this.toY = 0;
         this.y = 0;
+
+        this.missed = false;
 
         // Speed is defined by how many seconds it takes to go from the right side of the screen to the left
         this.speed = speed;
@@ -48,6 +89,7 @@ export class Reader
 
     miss(note)
     {
+        this.missed = true;
         note.active = false;
         this.accuracyUI.push(new AccuracyFX(-1, this.timeToX(this.chart.track.currentTime), this.y));
         if (note.type == 2) this.toY = 1;
@@ -123,6 +165,8 @@ export class Reader
         this.toY = 0;
         this.y = y;
 
+        this.missed = false;
+
         this.updateLastIndex();
         
         if (this.chart.chart[this.lastI] == undefined)
@@ -140,16 +184,14 @@ export class Reader
     {
         const stroke = note.closest ? "gray" : "black";
         note.y += ((note.time-this.chart.track.currentTime > 0.5) ? 0.2 : 0.5)*(this.y-note.y)
-        const T = new TRect(x, note.y, 32,32);
+        const T = new TRect(x, note.y, 128,128);
         switch(note.type)
         {
             case 0:
-                this.rr.fillRect(T, "red");
-                this.rr.strokeRect(T, stroke,0,false,4);
+                this.rr.drawImg(new TRect(x-64, note.y-128, 256,256), this.sprites[note.i][this.invert].enemy.currentImg, 0, this.alpha);
                 break;
             case 1:
-                this.rr.fillRect(T, "gold");
-                this.rr.strokeRect(T, stroke,0,false,4);
+                this.rr.drawImg(new TRect(x-64, note.y-128, 256,256), this.sprites[note.i][this.invert].projectile.currentImg, 0, this.alpha);
                 break;
             case 2:
                 this.rr.fillRect(T, "green");
@@ -180,6 +222,11 @@ export class Reader
         for (let i = this.lastI; this.getNote(i) != undefined && this.getNote(i).time < this.chart.track.currentTime + (this.speed*(1-this.hitpos)); i++)
         {
             if (this.getNote(i).y == undefined) this.setY(i);
+            if (this.getNote(i).i == undefined && this.getNote(i).type < 3)
+            {
+                this.getNote(i).i = this.enemyI;
+                this.enemyI = (this.enemyI+1)%2;
+            }
             if (this.getNote(i).active)
             {
                 callback(this.getNote(i));
@@ -189,6 +236,9 @@ export class Reader
 
     render()
     {
+        for (let i = 0; i < this.sprites.length; i++) for (const key of Object.keys(this.sprites[i][this.invert]))
+            this.sprites[i][this.invert][key].update(this.time);
+
         this.iterateActiveNotes((e) => this.renderNoteAt(e));
 
         for (let i = 0; i < this.accuracyUI.length; i++)
@@ -196,6 +246,8 @@ export class Reader
             if (this.accuracyUI[i]!= undefined) this.accuracyUI[i].render(this.rr);
             if (this.accuracyUI[i] != undefined && !this.accuracyUI[i].active) delete this.accuracyUI[i];
         }
+
+        this.rr.fillRect(new TRect(0,0,(this.time/this.chart.track.duration)*1920,8), "white");
 
         let s = ("000000" + Math.ceil(this.score)).slice(-7);
         s = s.substring(0,1)+""+s.substring(1,4)+""+s.substring(4,7);

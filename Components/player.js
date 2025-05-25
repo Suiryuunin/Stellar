@@ -8,19 +8,15 @@ export class Player
     constructor(P=new Pos(0,0))
     {
         this.T = new TRect(P.x,P.y,256,256);
-        this.y = P.y+this.T.h;
+        this.y = P.y+this.T.h*0.75;
         this.invert = "N";
         const w = 256;
         const h = 256;
         this.sprites = {
         "N": {
             "character": new Sprite(new TRect(P.x,P.y,w,h), "Character", 64,64, 4,
-            [
-                new Frame(0,0.2),
-                new Frame(1,0.2),
-                new Frame(2,0.2),
-                new Frame(3,0.2)
-            ], true, true),
+            0.2
+            , true, true),
 
             "squish": new Sprite(new TRect(P.x,P.y,w,h), "Squish", 64,64, 5,
             [
@@ -46,6 +42,14 @@ export class Player
             [
                 new Frame(1, 0.01),
                 new Frame(3, 0.02)
+            ], false, false),
+
+            "dmg": new Sprite(new TRect(P.x,P.y,w,h), "Dmg", 64,64, 5,
+            [
+                new Frame(1, 0.02),
+                new Frame(2, 0.02),
+                new Frame(3, 0.02),
+                new Frame(4, 0.02)
             ], false, false)
         },
         "I": {
@@ -82,6 +86,14 @@ export class Player
                 new Frame(1, 0.01),
                 new Frame(3, 0.02)
             ], false, false),
+
+            "dmg": new Sprite(new TRect(P.x,P.y,w,h), "Dmg/i", 64,64, 5,
+            [
+                new Frame(1, 0.02),
+                new Frame(2, 0.02),
+                new Frame(3, 0.02),
+                new Frame(4, 0.02)
+            ], false, false)
         }};
 
         this.oSprite = {
@@ -118,14 +130,14 @@ export class Player
     toUp(time)
     {
         this.T.y = 64;
-        this.y = 64;
+        this.y = 160-32;
         this.invert = "I";
         this.oSprite["up"].play(time);
     }
     toDown(time)
     {
         this.T.y = 1080-this.T.h-64;
-        this.y = this.T.y+this.T.h;
+        this.y = this.T.y+this.T.h*0.75;
         this.invert = "N";
         this.oSprite["down"].play(time);
     }
@@ -143,17 +155,19 @@ export class Player
         }
     }
 
-    update(time, input, clearedNoteType, toY)
+    update(reader)
     {
-        if (toY == 1) this.toUp(time);
-        else if (toY == -1) this.toDown(time);
-        if (input.active) this.sprites[this.invert]["squish"].play(time);
-        if (clearedNoteType != "") this.checkInput(input, clearedNoteType, time);
+        if (reader.toY == 1) this.toUp(reader.time);
+        else if (reader.toY == -1) this.toDown(reader.time);
+        if (reader.input.active) this.sprites[this.invert]["squish"].play(reader.time);
+        if (reader.clearedNoteType != "") this.checkInput(reader.input, reader.clearedNoteType, reader.time);
+
+        if (reader.missed) this.sprites[this.invert]["dmg"].play(reader.time);
 
         for (const key of Object.keys(this.sprites[this.invert]))
-            if (this.sprites[this.invert][key] != undefined) this.sprites[this.invert][key].update(time, this.T);
+            if (this.sprites[this.invert][key] != undefined) this.sprites[this.invert][key].update(reader.time, this.T);
         for (const key of Object.keys(this.oSprite))
-            this.oSprite[key].update(time);
+            this.oSprite[key].update(reader.time);
     }
 
     render(rr)
