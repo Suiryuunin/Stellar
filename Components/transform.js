@@ -7,6 +7,23 @@ export class TRect
         this.w = w;
         this.h = h;
     }
+
+    top()
+    {
+        return this.y;
+    }
+    left()
+    {
+        return this.x;
+    }
+    bottom()
+    {
+        return (this.y+this.h);
+    }
+    right()
+    {
+        return (this.x+this.w);
+    }
 }
 
 export class Pos

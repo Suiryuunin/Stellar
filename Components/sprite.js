@@ -39,15 +39,16 @@ export class Sprite
         this.T.y = P.y;
     }
 
-    update(time, P = new Pos(0,0))
+    update(time, P)
     {
-        this.updatePos(P);
+        if (P!=undefined)this.updatePos(P);
         this.animation.update(time);
+
+        if (time-this.animation.startTime > this.animation.loopTime) this.active = false;
     }
 
     render(rr)
     {
         if (this.active) rr.drawImg(this.T, this.animation.currentImg, 0, this.alpha);
-        if (!this.looping && this.animation.loop.length-1 == this.animation.currentIndex) this.active = false;
     }
 }

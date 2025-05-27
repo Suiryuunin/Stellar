@@ -35,7 +35,7 @@ export class Player
                 new Frame(4, 0.020),
                 new Frame(5, 0.025),
                 new Frame(6, 0.030),
-                new Frame(7, 1.000)
+                new Frame(7, 0.030)
             ], false, false),
             
             "parry": new Sprite(new TRect(P.x,P.y,w,h), "Parry", 64,64, 4,
@@ -78,7 +78,7 @@ export class Player
                 new Frame(4, 0.020),
                 new Frame(5, 0.025),
                 new Frame(6, 0.030),
-                new Frame(7, 1.000)
+                new Frame(7, 0.030)
             ], false, false),
             
             "parry": new Sprite(new TRect(P.x,P.y,w,h), "Parry/i", 64,64, 4,

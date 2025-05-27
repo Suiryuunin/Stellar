@@ -31,7 +31,7 @@ export class Renderer
         let x = (pageX-_rect.left) / scale.x;
         let y = (pageY-_rect.top) / scale.y;
 
-        return new Vec2(x, y);
+        return new Pos(x, y);
     }
 
 

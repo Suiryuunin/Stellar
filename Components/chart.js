@@ -2,13 +2,25 @@ import { Fetch } from "./fetcher.js";
 
 export class Chart
 {
-    constructor(title)
+    constructor()
     {
-        this.title = title;
+        this.title = "";
 
         this.chart;
         this.totalNotes = 0;
         this.track = new Audio();
+
+        this.fresh = true;
+    }
+
+    reset()
+    {
+        this.fresh = true;
+        this.track.pause();
+        this.track.currentTime = 0;
+        this.track.src = "";
+
+        this.chart = undefined;
     }
 
     async FetchChart(path)
@@ -22,6 +34,7 @@ export class Chart
 
     start()
     {
+        this.fresh = false;
         this.track.play();
     }
 }

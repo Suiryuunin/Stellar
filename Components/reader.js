@@ -71,6 +71,7 @@ export class Reader
         this.badDelay = 0.2;
 
         this.accuracyUI = [];
+        this.fx = [];
 
         this.chart = chart;
         this.lastI = 0;
@@ -87,10 +88,28 @@ export class Reader
 
     }
 
+    spawnExplosion(note)
+    {
+        switch (note.type)
+        {
+            case 0: this.fx.push(new Sprite(new TRect(this.timeToX(note.time)-64, note.y-128, 256,256), "Projectile/e",64,64,8,0.005,false,false));break;
+            case 1: this.fx.push(new Sprite(new TRect(this.timeToX(note.time)-64, note.y-128, 256,256), "Projectile/e",64,64,8,0.005,false,false));break;
+            case 2: this.fx.push(new Sprite(new TRect(this.timeToX(note.time)-64, note.y-128, 256,256), "Projectile/e",64,64,8,0.005,false,false));break;
+            case 3: this.fx.push(new Sprite(new TRect(this.timeToX(note.time)-64, note.y-128, 256,256), "Projectile/e",64,64,8,0.005,false,false));break;
+        }
+        this.fx[this.fx.length-1].play(this.time);
+    }
+
+    killNote(note)
+    {
+        note.active = false;
+        this.spawnExplosion(note)
+    }
+
     miss(note)
     {
         this.missed = true;
-        note.active = false;
+        this.killNote(note);
         this.accuracyUI.push(new AccuracyFX(-1, this.timeToX(this.chart.track.currentTime), this.y));
         if (note.type == 2) this.toY = 1;
         else if (note.type == 3) this.toY = -1;
@@ -149,7 +168,7 @@ export class Reader
                 if (accuracy >= 0)
                 {
                     this.score+=this.pts[accuracy];
-                    this.chart.chart[this.closestI].active = false;
+                    this.killNote(this.getNote(this.closestI));
                     this.accuracyUI.push(new AccuracyFX(accuracy, this.timeToX(this.chart.chart[this.closestI].time),this.y));
                     this.clearedNoteType = type;
                 }
@@ -178,6 +197,8 @@ export class Reader
         this.updateClosestIndex();
 
         this.resolveInput();
+
+        for (const sprite of this.fx) if (sprite != undefined) sprite.update(this.time);
     }
 
     renderType(x, note)
@@ -236,6 +257,15 @@ export class Reader
 
     render()
     {
+        for (let i = 0; i < this.fx.length; i++)
+        {
+            if (this.fx[i] != undefined)
+            {
+                this.fx[i].render(this.rr);
+                if (!this.fx[i].active) delete this.fx[i];
+            }
+        }
+
         for (let i = 0; i < this.sprites.length; i++) for (const key of Object.keys(this.sprites[i][this.invert]))
             this.sprites[i][this.invert][key].update(this.time);
 

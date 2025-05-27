@@ -6,11 +6,15 @@ import { Sprite } from "./Components/sprite.js";
 import { Pos, TRect } from "./Components/transform.js";
 import { Engine } from "./Engine/engine.js";
 import { Renderer } from "./Engine/renderer.js";
+import { LevelSelection } from "./levelSelect.js";
 
-const rr = new Renderer(document.querySelector("canvas"), 1);
-const chart = new Chart("Heiliges Requiem");
-await chart.FetchChart("HeiligesRequiem");
-const reader = new Reader(rr, chart, 2);
+export const rr = new Renderer(document.querySelector("canvas"), 1);
+
+const levelSelect = new LevelSelection();
+levelSelect.activate();
+
+let chart = new Chart();
+let reader;
 
 const player = new Player(new Pos(176,rr.ctx[0].canvas.height-256-64));
 
@@ -24,6 +28,25 @@ const stars = new Sprite(new TRect(0,0,1920,1080), "Stars", 256,144, 4,
 
 function update(dt)
 {
+    if (levelSelect.check())
+    {
+        levelSelect.deactivate();
+        chart.title = levelSelect.levelSlots[levelSelect.i].level.chartName;
+        chart.FetchChart(levelSelect.levelSlots[levelSelect.i].level.chartPath);
+    }
+    if (chart.fresh && chart.chart != undefined)
+    {
+        reader = new Reader(rr, chart, 2);
+        chart.start();
+    }
+
+    if (reader == undefined)
+    {
+        stars.update(engine.time);
+        stars.alpha = (0.5-Math.abs((engine.time*0.25)-(Math.floor(engine.time*0.25)+0.5)));
+        return;
+    }
+
     reader.update(player.y);
     player.update(reader);
     stars.update(reader.time);
@@ -37,11 +60,28 @@ function render()
 {
     rr.fillBackground("black");
     stars.render(rr);
-    reader.render();
-    rr.fillRect(new TRect(( (4*0.2) ) / 4 * rr.ctx[0].canvas.width, 0, 4, 1080), "white", 0, 0.2);
-    player.render(rr);
+    if (reader == undefined)
+        levelSelect.render(rr);
+    else
+    {
+        reader.render();
+        rr.fillRect(new TRect(( (4*0.2) ) / 4 * rr.ctx[0].canvas.width, 0, 4, 1080), "white", 0, 0.2);
+        player.render(rr);
+    }
+
+
     rr.render();
 }
+
+window.addEventListener("keyup", (e) =>
+{
+    if (e.code == "Escape")
+    {
+        chart.reset();
+        levelSelect.activate();
+        reader = undefined;
+    }
+})
 
 const engine = new Engine(60, update, render);
 engine.start();
@@ -50,5 +90,3 @@ const ratio = 9/16;
 window.addEventListener("load", () => rr.resize(window.innerWidth, window.innerHeight, ratio));
 rr.resize(window.innerWidth, window.innerHeight, ratio);
 window.addEventListener("resize", () => rr.resize(window.innerWidth, window.innerHeight, ratio));
-
-window.addEventListener("click", () => chart.start());
