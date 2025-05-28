@@ -56,8 +56,8 @@ export const typeIndex =
 
 export let keyBinds =
 {
-    "up": ["Space", "KeyW"],
-    "down": ["ShiftLeft", "KeyS"],
-    "slash": [0, "KeyJ"],
-    "parry": [2, "KeyK"]
+    "up": ["KeyW",""],
+    "down": ["KeyS",""],
+    "slash": [0,""],
+    "parry": [2,""]
 }

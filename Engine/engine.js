@@ -5,6 +5,7 @@ export class Engine
         this.running = false;
         
         this.time = 0;
+        this.TIME = 0;
         this.timeStamp = 0;
         this.delta = 0;
         this.update = update;
@@ -26,6 +27,7 @@ export class Engine
         this.run = (time) =>
         {
             this.time = time;
+            this.TIME = time*0.001;
             this.delta = (this.time - this.timeStamp)/1;
 
             if (this.delta >= 1000 / (this.fps + 4))

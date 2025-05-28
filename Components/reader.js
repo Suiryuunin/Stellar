@@ -10,6 +10,12 @@ export class Reader
     {
         this.enemyI = 0;
 
+        this.up = new Image(100,100);
+        this.up.src = "../Assets/Sprites/UpO/0.png";
+        
+        this.down = new Image(100,100);
+        this.down.src = "../Assets/Sprites/UpO/i/0.png";
+
         this.sprites =
         [{
         "N":
@@ -215,12 +221,10 @@ export class Reader
                 this.rr.drawImg(new TRect(x-64, note.y-128, 256,256), this.sprites[note.i][this.invert].projectile.currentImg, 0, this.alpha);
                 break;
             case 2:
-                this.rr.fillRect(T, "green");
-                this.rr.strokeRect(T, stroke,0,false,4);
+                this.rr.drawImg(new TRect(x-64, note.y-128, 256,256), this.up, 0, this.alpha);
                 break;
             case 3:
-                this.rr.fillRect(T, "blue");
-                this.rr.strokeRect(T, stroke,0,false,4);
+                this.rr.drawImg(new TRect(x-64, note.y-128, 256,256), this.down, 0, this.alpha);
                 break;
             default:
                 console.log("WHAT");

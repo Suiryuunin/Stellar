@@ -44,7 +44,7 @@ export class Sprite
         if (P!=undefined)this.updatePos(P);
         this.animation.update(time);
 
-        if (time-this.animation.startTime > this.animation.loopTime) this.active = false;
+        if (!this.looping && time-this.animation.startTime > this.animation.loopTime) this.active = false;
     }
 
     render(rr)

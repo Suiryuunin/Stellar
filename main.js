@@ -6,12 +6,13 @@ import { Sprite } from "./Components/sprite.js";
 import { Pos, TRect } from "./Components/transform.js";
 import { Engine } from "./Engine/engine.js";
 import { Renderer } from "./Engine/renderer.js";
-import { LevelSelection } from "./levelSelect.js";
+import { LevelSelection } from "./Components/levelSelect.js";
+import { Menu } from "./Components/menu.js";
 
 export const rr = new Renderer(document.querySelector("canvas"), 1);
 
-const levelSelect = new LevelSelection();
-levelSelect.activate();
+const menu = new Menu();
+menu.activate();
 
 let chart = new Chart();
 let reader;
@@ -28,11 +29,11 @@ const stars = new Sprite(new TRect(0,0,1920,1080), "Stars", 256,144, 4,
 
 function update(dt)
 {
-    if (levelSelect.check())
+    if (menu.levelSelect.check())
     {
-        levelSelect.deactivate();
-        chart.title = levelSelect.levelSlots[levelSelect.i].level.chartName;
-        chart.FetchChart(levelSelect.levelSlots[levelSelect.i].level.chartPath);
+        menu.deactivate();
+        chart.title = menu.levelSelect.levelSlots[menu.levelSelect.i].level.chartName;
+        chart.FetchChart(menu.levelSelect.levelSlots[menu.levelSelect.i].level.chartPath);
     }
     if (chart.fresh && chart.chart != undefined)
     {
@@ -42,8 +43,8 @@ function update(dt)
 
     if (reader == undefined)
     {
-        stars.update(engine.time);
-        stars.alpha = (0.5-Math.abs((engine.time*0.25)-(Math.floor(engine.time*0.25)+0.5)));
+        stars.update(engine.TIME);
+        stars.alpha = (0.5-Math.abs((engine.TIME*0.25)-(Math.floor(engine.TIME*0.25)+0.5)));
         return;
     }
 
@@ -60,9 +61,14 @@ function render()
 {
     rr.fillBackground("black");
     stars.render(rr);
-    if (reader == undefined)
-        levelSelect.render(rr);
-    else
+
+    if (menu.active)
+    {
+        menu.render(rr, reader, chart);
+        rr.render();
+        return;
+    }
+    else if (reader != undefined)
     {
         reader.render();
         rr.fillRect(new TRect(( (4*0.2) ) / 4 * rr.ctx[0].canvas.width, 0, 4, 1080), "white", 0, 0.2);
@@ -73,15 +79,15 @@ function render()
     rr.render();
 }
 
-window.addEventListener("keyup", (e) =>
-{
-    if (e.code == "Escape")
-    {
-        chart.reset();
-        levelSelect.activate();
-        reader = undefined;
-    }
-})
+// window.addEventListener("keyup", (e) =>
+// {
+//     if (e.code == "Escape")
+//     {
+//         chart.reset();
+//         menu.activate();
+//         reader = undefined;
+//     }
+// })
 
 const engine = new Engine(60, update, render);
 engine.start();
