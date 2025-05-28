@@ -4,7 +4,7 @@ export function GenerateSet(folderName, w, h, folderSize)
     for (let i = 0; i < folderSize; i++)
     {
         set.push(new Image(w, h));
-        set[i].src = "../Assets/Sprites/"+folderName+"/"+i+".png";
+        set[i].src = "./Assets/Sprites/"+folderName+"/"+i+".png";
     }
     return set;
 }

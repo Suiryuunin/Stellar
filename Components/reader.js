@@ -11,10 +11,10 @@ export class Reader
         this.enemyI = 0;
 
         this.up = new Image(100,100);
-        this.up.src = "../Assets/Sprites/UpO/0.png";
+        this.up.src = "./Assets/Sprites/UpO/0.png";
         
         this.down = new Image(100,100);
-        this.down.src = "../Assets/Sprites/UpO/i/0.png";
+        this.down.src = "./Assets/Sprites/UpO/i/0.png";
 
         this.sprites =
         [{

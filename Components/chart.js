@@ -28,10 +28,10 @@ export class Chart
     async FetchChart(path)
     {
         this.fetching = true;
-        await Fetch((result) => this.chart = result, "../Assets/Charts/"+path+"/chart.json");
+        await Fetch((result) => this.chart = result, "./Assets/Charts/"+path+"/chart.json");
         this.fetching = false;
         this.chart[0].y = 1;
-        this.track.src = "../Assets/Charts/"+path+"/track.wav";
+        this.track.src = "./Assets/Charts/"+path+"/track.wav";
         this.track.currentTime = 0;
         this.totalNotes = this.chart.length;
     }
