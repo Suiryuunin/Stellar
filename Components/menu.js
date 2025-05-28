@@ -1,4 +1,4 @@
-import { Button } from "./components.js";
+import { Button, Word } from "./components.js";
 import { ControlMenu } from "./controls.js";
 import { LevelSelection } from "./levelSelect.js";
 import { Pos, TRect } from "./transform.js";
@@ -17,6 +17,7 @@ export class Menu
             if (this.state == 1) this.levelSelect.deactivate();
             else if (this.state == 2) this.control.deactivate();
             else if (this.state == 3) this.scoreboard.deactivate();
+            else if (this.state == 5) this.infos[0].deactivate();
             this.state = 0;
             this.activate();
         }
@@ -24,10 +25,17 @@ export class Menu
         this.control = new ControlMenu(this.back);
         this.scoreboard;
 
+        this.infos =
+        [
+            new Button(()=>{this.back()}, ["<<"], new TRect(192, 1014, 64,64), 64),
+            new Word(["*La qualite des niveaux n'est pas garantie", "","Ceci est un jeu de rythme.", "[Attaquer] les ennemis rouges", "[Bloquer] les ennemis bleus", "[Haut] et [Bas], pour les obstacles", "Tapez au rythme,","lorsque les ennemis se trouvent sur la ligne."], new Pos(960,256), 32, new Pos(-0.5,-0.5))
+        ]
+
         this.elements =
         [
-            new Button(() => {this.state = 1;this.levelSelect.activate();this.deactivateButtons();this.elements[0].activate();}, ["Jouer"], new TRect(960, 508, 208, 64), 64),
-            new Button(() => {this.state = 2;this.control.activate();this.deactivateButtons();this.elements[1].activate();}, ["Contrôles"], new TRect(960, 672, 352, 64), 64)
+            new Button(() => {this.state = 1;this.levelSelect.activate();this.deactivateButtons();this.elements[0].activate();}, ["Jouer"], new TRect(960, 460, 208, 64), 64),
+            new Button(() => {this.state = 2;this.control.activate();this.deactivateButtons();this.elements[1].activate();}, ["Contrôles"], new TRect(960, 564, 352, 64), 64),
+            new Button(() => {this.state = 5;this.infos[0].activate();this.deactivateButtons();this.elements[0].activate();}, ["Infos"], new TRect(960, 672, 208, 64), 64)
         ];
 
         this.pauseMenu =
@@ -141,6 +149,10 @@ export class Menu
                 break;
             case 4:
                 for (const e of this.pauseMenu)
+                    e.render(rr);
+                break;
+            case 5:
+                for (const e of this.infos)
                     e.render(rr);
                 break;
         }

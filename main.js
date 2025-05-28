@@ -84,7 +84,7 @@ function render()
     else if (reader != undefined)
     {
         reader.render();
-        rr.fillRect(new TRect(( (4*0.2) ) / 4 * rr.ctx[0].canvas.width, 0, 4, 1080), "white", 0, 0.2);
+        rr.fillRect(new TRect(( (4*0.2) ) / 4 * rr.ctx[0].canvas.width, 0, 4, 1080), "white", 0, 0.5);
         player.render(rr);
     }
 

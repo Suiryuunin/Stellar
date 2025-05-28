@@ -102,10 +102,10 @@ export class Reader
     {
         switch (note.type)
         {
-            case 0: this.fx.push(new Sprite(new TRect(this.timeToX(note.time)-64, note.y-128, 256,256), "Projectile/e",64,64,8,0.005,false,false));break;
-            case 1: this.fx.push(new Sprite(new TRect(this.timeToX(note.time)-64, note.y-128, 256,256), "Projectile/e",64,64,8,0.005,false,false));break;
-            case 2: this.fx.push(new Sprite(new TRect(this.timeToX(note.time)-64, note.y-128, 256,256), "Projectile/e",64,64,8,0.005,false,false));break;
-            case 3: this.fx.push(new Sprite(new TRect(this.timeToX(note.time)-64, note.y-128, 256,256), "Projectile/e",64,64,8,0.005,false,false));break;
+            case 0: this.fx.push(new Sprite(new TRect(this.timeToX(note.time)-64, note.y-128, 256,256), "Explosion",64,64,8,0.02,false,false));break;
+            case 1: this.fx.push(new Sprite(new TRect(this.timeToX(note.time)-64, note.y-128, 256,256), "Explosion",64,64,8,0.02,false,false));break;
+            case 2: this.fx.push(new Sprite(new TRect(this.timeToX(note.time)-64, note.y-128, 256,256), "Explosion",64,64,8,0.02,false,false));break;
+            case 3: this.fx.push(new Sprite(new TRect(this.timeToX(note.time)-64, note.y-128, 256,256), "Explosion",64,64,8,0.02,false,false));break;
         }
         this.fx[this.fx.length-1].play(this.time);
     }
