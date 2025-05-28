@@ -231,7 +231,7 @@ export class Reader
                 this.rr.drawImg(new TRect(x-64, note.y-128, 256,256), this.sprites[0][this.invert].down.currentImg, 0, this.alpha);
                 break;
             default:
-                console.log("WHAT");
+                console.log("BRUH");
                 break;
         }
     }
