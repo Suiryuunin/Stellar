@@ -7,6 +7,8 @@ export class Player
 {
     constructor(P=new Pos(0,0))
     {
+        this.up = false;
+
         this.T = new TRect(P.x,P.y,256,256);
         this.y = P.y+this.T.h*0.75;
         this.invert = "N";
@@ -129,6 +131,7 @@ export class Player
 
     toUp(time)
     {
+        this.up = true;
         this.T.y = 64;
         this.y = 160-32;
         this.invert = "I";
@@ -136,6 +139,7 @@ export class Player
     }
     toDown(time)
     {
+        this.up = false;
         this.T.y = 1080-this.T.h-64;
         this.y = this.T.y+this.T.h*0.75;
         this.invert = "N";
@@ -148,8 +152,11 @@ export class Player
         {
             if (clearedNoteType == type && input.checkInput(type))
             {
-                if (type == "up") this.toUp(time);
-                else if (type == "down") this.toDown(time);
+                if (type == "up" || type == "down")
+                    if (this.up)
+                        this.toDown(time);
+                    else
+                        this.toUp(time);
                 else if (this.sprites[this.invert][type] != undefined) this.sprites[this.invert][type].play(time);
             }
         }
@@ -157,8 +164,11 @@ export class Player
 
     update(reader)
     {
-        if (reader.toY == 1) this.toUp(reader.time);
-        else if (reader.toY == -1) this.toDown(reader.time);
+        if (reader.toY != 0)
+            if (this.up)
+                this.toDown(reader.time);
+            else
+                this.toUp(reader.time);
         if (reader.input.active) this.sprites[this.invert]["squish"].play(reader.time);
         if (reader.clearedNoteType != "") this.checkInput(reader.input, reader.clearedNoteType, reader.time);
 

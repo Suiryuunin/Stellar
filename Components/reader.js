@@ -11,23 +11,21 @@ export class Reader
         this.enemyI = 0;
         this.done = false;
 
-        this.up = new Image(100,100);
-        this.up.src = "./Assets/Sprites/UpO/0.png";
-        
-        this.down = new Image(100,100);
-        this.down.src = "./Assets/Sprites/UpO/i/0.png";
-
         this.sprites =
         [{
         "N":
         {
             "enemy": new Ani(GenerateSet("Enemy", 64,64,4)),
-            "projectile": new Ani(GenerateSet("Projectile", 64,64,3))
+            "projectile": new Ani(GenerateSet("Projectile", 64,64,3)),
+            "up": new Ani(GenerateSet("UpO", 100,100,1)),
+            "down": new Ani(GenerateSet("DownO", 100,100,1))
         },
         "I":
         {
             "enemy": new Ani(GenerateSet("Enemy/i", 64,64,4)),
-            "projectile": new Ani(GenerateSet("Projectile/i", 64,64,3))
+            "projectile": new Ani(GenerateSet("Projectile/i", 64,64,3)),
+            "up": new Ani(GenerateSet("UpO/i", 100,100,1)),
+            "down": new Ani(GenerateSet("DownO/i", 100,100,1))
         }
         },
         {
@@ -51,6 +49,11 @@ export class Reader
         this.sprites[0].I.projectile.init([new Frame(0,d),new Frame(1,d),new Frame(2,d)], 0);
         this.sprites[1].N.projectile.init([new Frame(1,d),new Frame(2,d),new Frame(0,d)], 0);
         this.sprites[1].I.projectile.init([new Frame(1,d),new Frame(2,d),new Frame(0,d)], 0);
+
+        this.sprites[0].N.up.init([new Frame(0,1)], 0);
+        this.sprites[0].I.up.init([new Frame(0,1)], 0);
+        this.sprites[0].N.down.init([new Frame(0,1)], 0);
+        this.sprites[0].I.down.init([new Frame(0,1)], 0);
 
         this.score = 0;
         this.pts =
@@ -222,10 +225,10 @@ export class Reader
                 this.rr.drawImg(new TRect(x-64, note.y-128, 256,256), this.sprites[note.i][this.invert].projectile.currentImg, 0, this.alpha);
                 break;
             case 2:
-                this.rr.drawImg(new TRect(x-64, note.y-128, 256,256), this.up, 0, this.alpha);
+                this.rr.drawImg(new TRect(x-64, note.y-128, 256,256), this.sprites[0][this.invert].up.currentImg, 0, this.alpha);
                 break;
             case 3:
-                this.rr.drawImg(new TRect(x-64, note.y-128, 256,256), this.down, 0, this.alpha);
+                this.rr.drawImg(new TRect(x-64, note.y-128, 256,256), this.sprites[0][this.invert].down.currentImg, 0, this.alpha);
                 break;
             default:
                 console.log("WHAT");
