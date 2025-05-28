@@ -13,7 +13,8 @@ export class LevelSelection {
         [
             new LevelSlot(new Level("Kirakira Noel Story", "Roku Mochizuki", "KirakiraNoelStory")),
             new LevelSlot(new Level("neurosis", "awe", "neurosis")),
-            new LevelSlot(new Level("なんということはない日常", "DOVA-SYNDROME", "dova"))
+            new LevelSlot(new Level("なんということはない日常", "DOVA-SYNDROME", "dova")),
+            new LevelSlot(new Level("test", "test", "temp"))
         ];
         for (let i = 0; i < this.levelSlots.length; i++)
         {

@@ -9,6 +9,7 @@ export class Reader
     constructor(rr, chart, speed = 4)
     {
         this.enemyI = 0;
+        this.done = false;
 
         this.up = new Image(100,100);
         this.up.src = "./Assets/Sprites/UpO/0.png";
@@ -82,16 +83,19 @@ export class Reader
         this.chart = chart;
         this.lastI = 0;
         this.closestI = 0;
+
+        this.end = () =>
+        {
+            this.done = true;
+            this.chart.track.removeEventListener("ended", this.end);
+        };
+
+        this.chart.track.addEventListener("ended", this.end);
     }
 
     start()
     {
         this.chart.play();
-    }
-
-    end()
-    {
-
     }
 
     spawnExplosion(note)
@@ -166,6 +170,7 @@ export class Reader
 
     resolveInput()
     {
+        if (this.chart.chart[this.closestI] == undefined) return;
         for (const type of inputTypes)
         {
             if (this.input.checkInput(type))
@@ -194,11 +199,7 @@ export class Reader
 
         this.updateLastIndex();
         
-        if (this.chart.chart[this.lastI] == undefined)
-        {
-            this.end();
-            return;
-        }
+        if (this.chart.chart[this.lastI] == undefined) return;
 
         this.updateClosestIndex();
 

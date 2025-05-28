@@ -60,6 +60,6 @@ export class Button
     render(rr)
     {
         rr.write(this.word, "white", this.T, this.size, this.offset);
-        // rr.strokeRect(new TRect(this.T.x+(this.offset.x*this.T.w), this.T.y+(this.offset.y*this.T.h), this.T.w,this.T.h), "white", 0, true);
+        rr.strokeRect(new TRect(this.T.x+(this.offset.x*this.T.w), this.T.y+(this.offset.y*this.T.h), this.T.w,this.T.h), "white", 0, true);
     }
 }

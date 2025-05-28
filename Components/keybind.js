@@ -66,14 +66,31 @@ export class KeyBind
             window.addEventListener("mousedown", this.add);
             this.deactivate();
         }
+        
+        let bind2 = "";
+        switch (bind)
+        {
+            case "up":
+                bind2 = "Haut";
+                break;
+            case "down":
+                bind2 = "Bas";
+                break;
+            case "slash":
+                bind2 = "Attaquer";
+                break;
+            case "parry":
+                bind2 = "Bloquer";
+                break;
+        }
 
         this.e =
         [
-            new Word([bind.slice(0,1).toUpperCase()+bind.slice(1,bind.length)], new Pos(288, y+h), 64),
+            new Word([bind2], new Pos(288, y+h), 64),
             new Word(binds, new Pos(1648, y+h), 64, new Pos(-1,-0.5)),
             new Word(["*  '  *  '  *  '  *  '  *  '  *  '  *  '  *  '  *  '  *  '  *  '  *  '  *"], new Pos(960, y+h+this.height-32), 32, new Pos(-0.5,0)),
-            new Button(()=>{this.pendingAdd()}, ["Add"], new TRect(288+64, y+h+72, 112, 48),48),
-            new Button(()=>{this.clear()}, ["Clear"], new TRect(576, y+h+72, 160, 48),48)
+            new Button(()=>{this.pendingAdd()}, ["Ajouter"], new TRect(288+64+64, y+h+72, 208, 48),48),
+            new Button(()=>{this.clear()}, ["Effacer"], new TRect(576+128, y+h+72, 208, 48),48)
         ];
     }
 
@@ -125,7 +142,23 @@ export class KeyBind
             }
             binds.push("["+e+"]");
         }
-        this.e[0] = new Word([this.bind.slice(0,1).toUpperCase()+this.bind.slice(1,this.bind.length)], new Pos(288, this.y+h), 64);
+        let bind2 = "";
+        switch (this.bind)
+        {
+            case "up":
+                bind2 = "Haut";
+                break;
+            case "down":
+                bind2 = "Bas";
+                break;
+            case "slash":
+                bind2 = "Attaquer";
+                break;
+            case "parry":
+                bind2 = "Bloquer";
+                break;
+        }
+        this.e[0] = new Word([bind2], new Pos(288, this.y+h), 64);
         this.e[1] = new Word(binds, new Pos(1648, this.y+h), 64, new Pos(-1,-0.5));
     }
 

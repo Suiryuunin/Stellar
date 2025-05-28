@@ -8,6 +8,7 @@ import { Engine } from "./Engine/engine.js";
 import { Renderer } from "./Engine/renderer.js";
 import { LevelSelection } from "./Components/levelSelect.js";
 import { Menu } from "./Components/menu.js";
+import { ScoreBoard } from "./Components/scoreboard.js";
 
 export const rr = new Renderer(document.querySelector("canvas"), 1);
 
@@ -29,6 +30,17 @@ const stars = new Sprite(new TRect(0,0,1920,1080), "Stars", 256,144, 4,
 
 function update(dt)
 {
+    if (reader != undefined && reader.done)
+    {
+        chart.reset();
+        menu.activate();
+        menu.scoreboard = new ScoreBoard(reader, menu.back);
+        menu.scoreboard.activate();
+        menu.state = 3;
+        player.toDown(reader.time);
+        reader = undefined;
+    }
+
     if (menu.levelSelect.check())
     {
         menu.deactivate();
@@ -38,6 +50,7 @@ function update(dt)
     if (chart.fresh && chart.chart != undefined)
     {
         reader = new Reader(rr, chart, 2);
+        menu.reader = reader;
         chart.start();
     }
 
@@ -78,16 +91,6 @@ function render()
 
     rr.render();
 }
-
-// window.addEventListener("keyup", (e) =>
-// {
-//     if (e.code == "Escape")
-//     {
-//         chart.reset();
-//         menu.activate();
-//         reader = undefined;
-//     }
-// })
 
 const engine = new Engine(60, update, render);
 engine.start();
